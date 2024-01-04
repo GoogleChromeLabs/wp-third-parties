@@ -8,7 +8,7 @@
  */
 
 if ( ! file_exists( dirname( __DIR__, 2 ) . '/vendor/autoload.php' ) ) {
-    die( 'Missing Composer autoloader.' );
+	die( 'Missing Composer autoloader.' );
 }
 
 require_once dirname( __DIR__, 2 ) . '/vendor/autoload.php';

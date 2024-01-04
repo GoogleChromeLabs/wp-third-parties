@@ -12,6 +12,7 @@ namespace Google_Chrome_Labs\WP_Third_Parties\Third_Parties;
 use Google_Chrome_Labs\WP_Third_Parties\Contracts\WP_Third_Party;
 use GoogleChromeLabs\ThirdPartyCapital\Contracts\ThirdParty;
 use GoogleChromeLabs\ThirdPartyCapital\Data\ThirdPartyScriptData;
+use GoogleChromeLabs\ThirdPartyCapital\Data\ThirdPartyScriptOutput;
 
 /**
  * Base class representing a third party integration for WordPress.
@@ -84,7 +85,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 		$id = $this->third_party->getId();
 
 		$handles = array();
-		foreach ( $this->third_party->getStylesheets() as $index => $stylesheet ) {
+		foreach ( array_keys( $this->third_party->getStylesheets() ) as $index ) {
 			$handles[] = $this->create_style_handle( $id, $index );
 		}
 		return $handles;
@@ -141,7 +142,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 * Enqueues all scripts for the third party.
 	 */
 	private function enqueue_scripts() {
-		$id = $this->output->getId();
+		$id = $this->third_party->getId();
 
 		$prev_scripts = array(
 			ThirdPartyScriptData::LOCATION_HEAD => array(),
@@ -163,12 +164,12 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Enqueues the given external script.
 	 *
-	 * @param array  $script       Script data.
-	 * @param string $handle       Script handle to use.
-	 * @param array  $prev_scripts Map of script location to previously enqueued external scripts. Passed by reference.
+	 * @param ThirdPartyScriptOutput $script       Script data.
+	 * @param string                 $handle       Script handle to use.
+	 * @param array                  $prev_scripts Map of script location to previously enqueued external scripts. Passed by reference.
 	 * @return bool True on success, false on failure.
 	 */
-	private function enqueue_external_script( array $script, string $handle, array &$prev_scripts ): bool {
+	private function enqueue_external_script( ThirdPartyScriptOutput $script, string $handle, array &$prev_scripts ): bool {
 		if ( ThirdPartyScriptData::ACTION_APPEND === $script['action'] ) {
 			$dependencies = $prev_scripts[ $script['location'] ];
 		} else {
@@ -194,11 +195,11 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Enqueues the given inline script.
 	 *
-	 * @param array $script       Script data.
-	 * @param array $prev_scripts Map of script location and previously enqueued external scripts.
+	 * @param ThirdPartyScriptOutput $script       Script data.
+	 * @param array                  $prev_scripts Map of script location and previously enqueued external scripts.
 	 * @return bool True on success, false on failure.
 	 */
-	private function enqueue_inline_script( array $script, array $prev_scripts ): bool {
+	private function enqueue_inline_script( ThirdPartyScriptOutput $script, array $prev_scripts ): bool {
 		if ( ! $prev_scripts[ $script['location'] ] ) {
 			return false;
 		}
@@ -224,10 +225,10 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 *
 	 * Other than regular inline scripts, such scripts are not directly attached to or depending on any external script.
 	 *
-	 * @param array $script Script data.
+	 * @param ThirdPartyScriptOutput $script Script data.
 	 * @return bool True on success, false on failure.
 	 */
-	private function enqueue_standalone_inline_script( array $script ): bool {
+	private function enqueue_standalone_inline_script( ThirdPartyScriptOutput $script ): bool {
 		// If head script to prepend, print immediately.
 		if ( ThirdPartyScriptData::LOCATION_HEAD === $script['location'] && ThirdPartyScriptData::ACTION_PREPEND === $script['action'] ) {
 			wp_print_inline_script_tag( $script['code'] );
@@ -259,12 +260,12 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Returns the handle to register the given script with in WordPress.
 	 *
-	 * @param string $id     Third party identifier.
-	 * @param int    $index  Index of the script in the list.
-	 * @param array  $script Script data.
+	 * @param string                 $id     Third party identifier.
+	 * @param int                    $index  Index of the script in the list.
+	 * @param ThirdPartyScriptOutput $script Script data.
 	 * @return string Script handle.
 	 */
-	private function create_script_handle( string $id, int $index, array $script ): string {
+	private function create_script_handle( string $id, int $index, ThirdPartyScriptOutput $script ): string {
 		if ( isset( $script['key'] ) ) {
 			return "{$id}-{$script['key']}";
 		}

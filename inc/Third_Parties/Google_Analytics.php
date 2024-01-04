@@ -9,6 +9,7 @@
 
 namespace Google_Chrome_Labs\WP_Third_Parties\Third_Parties;
 
+use GoogleChromeLabs\ThirdPartyCapital\Contracts\ThirdParty;
 use GoogleChromeLabs\ThirdPartyCapital\ThirdParties\GoogleAnalytics;
 
 /**
