@@ -1,0 +1,53 @@
+{
+  "name": "googlechromelabs/wp-third-parties",
+  "description": "This package is a collection of classes and utilities that can be used to efficiently load third-party libraries into your WordPress application.",
+  "type": "library",
+  "license": "Apache-2.0",
+  "require": {
+    "php": ">=7",
+    "googlechromelabs/third-party-capital": "*"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.4.1 || ^0.5 || ^0.6.2 || ^0.7 || ^1.0",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "phpmd/phpmd": "^2.9",
+    "phpstan/phpstan": "^1.10",
+    "phpstan/extension-installer": "^1.2",
+    "slevomat/coding-standard": "^8.9",
+    "szepeviktor/phpstan-wordpress": "^1.1",
+    "wp-coding-standards/wpcs": "^3.0.0",
+    "wp-phpunit/wp-phpunit": "^6.1",
+    "yoast/phpunit-polyfills": "^1.0"
+  },
+  "scripts": {
+    "lint":  "phpcs --standard=phpcs.xml.dist",
+    "format": "phpcbf --standard=phpcs.xml.dist",
+    "test": "phpunit -c phpunit.xml.dist --verbose",
+    "phpmd": "phpmd . text phpmd.xml",
+    "phpstan": "phpstan analyse --memory-limit=2048M"
+  },
+  "scripts-descriptions": {
+    "lint": "Detect coding standards issues",
+    "format": "Detect and automatically fix most coding standards issues",
+    "test": "Run unit tests",
+    "phpmd": "Run PHP mess detector",
+    "phpstan": "Run static analysis"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Google_Chrome_Labs\\WP_Third_Parties\\": "inc/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Google_Chrome_Labs\\WP_Third_Parties\\Test_Data\\": "tests/phpunit/testdata",
+      "Google_Chrome_Labs\\WP_Third_Parties\\Test_Utils\\": "tests/phpunit/utils"
+    }
+  }
+}
