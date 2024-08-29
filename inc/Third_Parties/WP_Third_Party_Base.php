@@ -133,7 +133,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 				$handle,
 				$stylesheet,
 				array(),
-				null
+				null // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			);
 		}
 	}
@@ -166,10 +166,15 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 *
 	 * @param ThirdPartyScriptOutput $script       Script data.
 	 * @param string                 $handle       Script handle to use.
-	 * @param array                  $prev_scripts Map of script location to previously enqueued external scripts. Passed by reference.
+	 * @param array                  $prev_scripts Map of script location to previously enqueued external scripts.
+	 *                                             Passed by reference.
 	 * @return bool True on success, false on failure.
 	 */
-	private function enqueue_external_script( ThirdPartyScriptOutput $script, string $handle, array &$prev_scripts ): bool {
+	private function enqueue_external_script(
+		ThirdPartyScriptOutput $script,
+		string $handle,
+		array &$prev_scripts
+	): bool {
 		if ( ThirdPartyScriptData::ACTION_APPEND === $script['action'] ) {
 			$dependencies = $prev_scripts[ $script['location'] ];
 		} else {
@@ -186,7 +191,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 			$handle,
 			$script['url'],
 			$dependencies,
-			null,
+			null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			$args
 		);
 		return true;
@@ -199,7 +204,10 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 * @param array                  $prev_scripts Map of script location and previously enqueued external scripts.
 	 * @return bool True on success, false on failure.
 	 */
-	private function enqueue_inline_script( ThirdPartyScriptOutput $script, array $prev_scripts ): bool {
+	private function enqueue_inline_script(
+		ThirdPartyScriptOutput $script,
+		array $prev_scripts
+	): bool {
 		if ( ! $prev_scripts[ $script['location'] ] ) {
 			return false;
 		}
@@ -230,7 +238,10 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 */
 	private function enqueue_standalone_inline_script( ThirdPartyScriptOutput $script ): bool {
 		// If head script to prepend, print immediately.
-		if ( ThirdPartyScriptData::LOCATION_HEAD === $script['location'] && ThirdPartyScriptData::ACTION_PREPEND === $script['action'] ) {
+		if (
+			ThirdPartyScriptData::LOCATION_HEAD === $script['location'] &&
+			ThirdPartyScriptData::ACTION_PREPEND === $script['action']
+		) {
 			wp_print_inline_script_tag( $script['code'] );
 			return true;
 		}
