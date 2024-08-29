@@ -20,7 +20,7 @@ class YouTube_Embed extends WP_Third_Party_Base {
 	/**
 	 * Gets the path to the third party data JSON file.
 	 *
-	 * @param array $args Input arguments to set.
+	 * @param array<string, mixed> $args Input arguments to set.
 	 * @return ThirdParty Reference to the WordPress-agnostic third party implementation.
 	 */
 	protected function create_third_party( array $args ): ThirdParty {

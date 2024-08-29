@@ -29,7 +29,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Constructor.
 	 *
-	 * @param array $args Input arguments to set.
+	 * @param array<string, mixed> $args Input arguments to set.
 	 */
 	public function __construct( array $args ) {
 		$this->third_party = $this->create_third_party( $args );
@@ -38,9 +38,9 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Sets input arguments for the integration.
 	 *
-	 * @param array $args Input arguments to set.
+	 * @param array<string, mixed> $args Input arguments to set.
 	 */
-	final public function set_args( array $args ) {
+	final public function set_args( array $args ): void {
 		$this->third_party->setArgs( $args );
 	}
 
@@ -49,7 +49,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 *
 	 * Must be called anytime before the {@see 'template_redirect'} action hook.
 	 */
-	final public function add_hooks() {
+	final public function add_hooks(): void {
 		if ( ! $this->third_party->getStylesheets() && ! $this->third_party->getScripts() ) {
 			return;
 		}
@@ -115,7 +115,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Gets the path to the third party data JSON file.
 	 *
-	 * @param array $args Input arguments to set.
+	 * @param array<string, mixed> $args Input arguments to set.
 	 * @return ThirdParty Reference to the WordPress-agnostic third party implementation.
 	 */
 	abstract protected function create_third_party( array $args ): ThirdParty;
@@ -123,7 +123,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Enqueues all stylesheets for the third party.
 	 */
-	private function enqueue_stylesheets() {
+	private function enqueue_stylesheets(): void {
 		$id = $this->third_party->getId();
 
 		foreach ( $this->third_party->getStylesheets() as $index => $stylesheet ) {
@@ -141,7 +141,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Enqueues all scripts for the third party.
 	 */
-	private function enqueue_scripts() {
+	private function enqueue_scripts(): void {
 		$id = $this->third_party->getId();
 
 		$prev_scripts = array(
@@ -164,10 +164,10 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Enqueues the given external script.
 	 *
-	 * @param ThirdPartyScriptOutput $script       Script data.
-	 * @param string                 $handle       Script handle to use.
-	 * @param array                  $prev_scripts Map of script location to previously enqueued external scripts.
-	 *                                             Passed by reference.
+	 * @param ThirdPartyScriptOutput  $script       Script data.
+	 * @param string                  $handle       Script handle to use.
+	 * @param array<string, string[]> $prev_scripts Map of script location to previously enqueued external scripts.
+	 *                                              Passed by reference.
 	 * @return bool True on success, false on failure.
 	 */
 	private function enqueue_external_script(
@@ -200,8 +200,8 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Enqueues the given inline script.
 	 *
-	 * @param ThirdPartyScriptOutput $script       Script data.
-	 * @param array                  $prev_scripts Map of script location and previously enqueued external scripts.
+	 * @param ThirdPartyScriptOutput  $script       Script data.
+	 * @param array<string, string[]> $prev_scripts Map of script location and previously enqueued external scripts.
 	 * @return bool True on success, false on failure.
 	 */
 	private function enqueue_inline_script(
