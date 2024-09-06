@@ -54,4 +54,14 @@ interface WP_Third_Party {
 	 * @return string[] List of script handles, or empty array if there are none.
 	 */
 	public function get_script_handles(): array;
+
+	/**
+	 * Enqueues all stylesheets for the third party.
+	 */
+	public function enqueue_stylesheets(): void;
+
+	/**
+	 * Enqueues all scripts for the third party.
+	 */
+	public function enqueue_scripts(): void;
 }
