@@ -31,7 +31,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 *
 	 * @param array<string, mixed> $args Input arguments to set.
 	 */
-	public function __construct( array $args ) {
+	final public function __construct( array $args ) {
 		$this->third_party = $this->create_third_party( $args );
 	}
 
@@ -50,17 +50,12 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 * Must be called anytime before the {@see 'template_redirect'} action hook.
 	 */
 	final public function add_hooks(): void {
-		if ( ! $this->third_party->getStylesheets() && ! $this->third_party->getScripts() ) {
-			return;
+		if ( $this->third_party->getStylesheets() ) {
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_stylesheets' ) );
 		}
-
-		add_action(
-			'wp_enqueue_scripts',
-			function () {
-				$this->enqueue_stylesheets();
-				$this->enqueue_scripts();
-			}
-		);
+		if ( $this->third_party->getScripts() ) {
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		}
 	}
 
 	/**
@@ -103,7 +98,8 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 
 		$handles = array();
 		foreach ( $this->third_party->getScripts() as $index => $script ) {
-			if ( isset( $script['code'] ) ) {
+			// Inline scripts do not have a handle.
+			if ( ! $script->isExternal() ) {
 				continue;
 			}
 
@@ -113,17 +109,9 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	}
 
 	/**
-	 * Gets the path to the third party data JSON file.
-	 *
-	 * @param array<string, mixed> $args Input arguments to set.
-	 * @return ThirdParty Reference to the WordPress-agnostic third party implementation.
-	 */
-	abstract protected function create_third_party( array $args ): ThirdParty;
-
-	/**
 	 * Enqueues all stylesheets for the third party.
 	 */
-	private function enqueue_stylesheets(): void {
+	final public function enqueue_stylesheets(): void {
 		$id = $this->third_party->getId();
 
 		foreach ( $this->third_party->getStylesheets() as $index => $stylesheet ) {
@@ -141,7 +129,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	/**
 	 * Enqueues all scripts for the third party.
 	 */
-	private function enqueue_scripts(): void {
+	final public function enqueue_scripts(): void {
 		$id = $this->third_party->getId();
 
 		$prev_scripts = array(
@@ -149,7 +137,7 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 			ThirdPartyScriptData::LOCATION_BODY => array(),
 		);
 		foreach ( $this->third_party->getScripts() as $index => $script ) {
-			if ( isset( $script['code'] ) ) {
+			if ( ! $script->isExternal() ) {
 				if ( ! $this->enqueue_inline_script( $script, $prev_scripts ) ) {
 					$this->enqueue_standalone_inline_script( $script );
 				}
@@ -160,6 +148,14 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 			$this->enqueue_external_script( $script, $handle, $prev_scripts );
 		}
 	}
+
+	/**
+	 * Gets the path to the third party data JSON file.
+	 *
+	 * @param array<string, mixed> $args Input arguments to set.
+	 * @return ThirdParty Reference to the WordPress-agnostic third party implementation.
+	 */
+	abstract protected function create_third_party( array $args ): ThirdParty;
 
 	/**
 	 * Enqueues the given external script.
@@ -175,21 +171,23 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 		string $handle,
 		array &$prev_scripts
 	): bool {
-		if ( ThirdPartyScriptData::ACTION_APPEND === $script['action'] ) {
-			$dependencies = $prev_scripts[ $script['location'] ];
+		$location = $script->getLocation();
+
+		if ( ThirdPartyScriptData::ACTION_APPEND === $script->getAction() ) {
+			$dependencies = $prev_scripts[ $location ];
 		} else {
 			$dependencies = array();
 		}
 
-		$args = ThirdPartyScriptData::LOCATION_BODY === $script['location']
+		$args = ThirdPartyScriptData::LOCATION_BODY === $location
 			? array( 'in_footer' => true ) : array();
 
 		// Add handle to the relevant list of already enqueued scripts (passed by reference).
-		$prev_scripts[ $script['location'] ][] = $handle;
+		$prev_scripts[ $location ][] = $handle;
 
 		wp_enqueue_script(
 			$handle,
-			$script['url'],
+			$script->getUrl(),
 			$dependencies,
 			null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			$args
@@ -208,21 +206,22 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 		ThirdPartyScriptOutput $script,
 		array $prev_scripts
 	): bool {
-		if ( ! $prev_scripts[ $script['location'] ] ) {
+		$location = $script->getLocation();
+		if ( ! $prev_scripts[ $location ] ) {
 			return false;
 		}
 
-		if ( ThirdPartyScriptData::ACTION_APPEND === $script['action'] ) {
-			$handle   = $prev_scripts[ $script['location'] ][ count( $prev_scripts[ $script['location'] ] ) - 1 ];
+		if ( ThirdPartyScriptData::ACTION_APPEND === $script->getAction() ) {
+			$handle   = $prev_scripts[ $location ][ count( $prev_scripts[ $location ] ) - 1 ];
 			$position = 'after';
 		} else {
-			$handle   = $prev_scripts[ $script['location'] ][0];
+			$handle   = $prev_scripts[ $location ][0];
 			$position = 'before';
 		}
 
 		wp_add_inline_script(
 			$handle,
-			$script['code'],
+			$script->getCode(),
 			$position
 		);
 		return true;
@@ -237,22 +236,25 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 * @return bool True on success, false on failure.
 	 */
 	private function enqueue_standalone_inline_script( ThirdPartyScriptOutput $script ): bool {
+		$location = $script->getLocation();
+		$action   = $script->getAction();
+
 		// If head script to prepend, print immediately.
 		if (
-			ThirdPartyScriptData::LOCATION_HEAD === $script['location'] &&
-			ThirdPartyScriptData::ACTION_PREPEND === $script['action']
+			ThirdPartyScriptData::LOCATION_HEAD === $location &&
+			ThirdPartyScriptData::ACTION_PREPEND === $action
 		) {
-			wp_print_inline_script_tag( $script['code'] );
+			wp_print_inline_script_tag( $script->getCode() );
 			return true;
 		}
 
 		// Otherwise, add action to print it in roughly the right place.
 		add_action(
-			ThirdPartyScriptData::LOCATION_BODY === $script['location'] ? 'wp_footer' : 'wp_head',
+			ThirdPartyScriptData::LOCATION_BODY === $location ? 'wp_footer' : 'wp_head',
 			static function () use ( $script ) {
-				wp_print_inline_script_tag( $script['code'] );
+				wp_print_inline_script_tag( $script->getCode() );
 			},
-			ThirdPartyScriptData::ACTION_APPEND === $script['action'] ? PHP_INT_MAX : PHP_INT_MIN
+			ThirdPartyScriptData::ACTION_APPEND === $action ? PHP_INT_MAX : PHP_INT_MIN
 		);
 		return true;
 	}
@@ -277,8 +279,9 @@ abstract class WP_Third_Party_Base implements WP_Third_Party {
 	 * @return string Script handle.
 	 */
 	private function create_script_handle( string $id, int $index, ThirdPartyScriptOutput $script ): string {
-		if ( isset( $script['key'] ) ) {
-			return "{$id}-{$script['key']}";
+		$key = $script->getKey();
+		if ( '' !== $key ) {
+			return "{$id}-{$key}";
 		}
 		return $index > 0 ? "{$id}-{$index}" : $id;
 	}
