@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">=7.2",
-    "googlechromelabs/third-party-capital": "dev-add/php-support"
+    "googlechromelabs/third-party-capital": "dev-main"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.4.1 || ^0.5 || ^0.6.2 || ^0.7 || ^1.0",
