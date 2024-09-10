@@ -1,4 +1,4 @@
-name: PHP Code Linting
+name: PHP Unit Testing
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
       - main
     # Only run if PHP-related files changed.
     paths:
-      - '.github/workflows/php-lint.yml'
+      - '.github/workflows/php-test.yml'
       - '**.php'
-      - 'phpcs.xml.dist'
+      - 'phpunit.xml.dist'
       - 'composer.json'
       - 'composer.lock'
   pull_request:
@@ -16,9 +16,9 @@ on:
       - main
     # Only run if PHP-related files changed.
     paths:
-      - '.github/workflows/php-lint.yml'
+      - '.github/workflows/php-test.yml'
       - '**.php'
-      - 'phpcs.xml.dist'
+      - 'phpunit.xml.dist'
       - 'composer.json'
       - 'composer.lock'
     types:
@@ -31,7 +31,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  php-lint:
+  php-test:
     name: PHP
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -48,11 +48,5 @@ jobs:
       - name: Install Composer dependencies
         run: composer update
 
-      - name: PHP Lint
-        run: composer lint
-
-      - name: PHPStan
-        run: composer phpstan
-
-      - name: PHPMD
-        run: composer phpmd
+      - name: PHPUnit Test
+        run: composer test

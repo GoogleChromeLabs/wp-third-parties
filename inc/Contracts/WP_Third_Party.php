@@ -17,16 +17,16 @@ interface WP_Third_Party {
 	/**
 	 * Sets input arguments for the integration.
 	 *
-	 * @param array $args Input arguments to set.
+	 * @param array<string, mixed> $args Input arguments to set.
 	 */
-	public function set_args( array $args );
+	public function set_args( array $args ): void;
 
 	/**
 	 * Adds hooks to WordPress to load the integration.
 	 *
 	 * Must be called anytime before the {@see 'template_redirect'} action hook.
 	 */
-	public function add_hooks();
+	public function add_hooks(): void;
 
 	/**
 	 * Gets the HTML output for the integration.
@@ -54,4 +54,14 @@ interface WP_Third_Party {
 	 * @return string[] List of script handles, or empty array if there are none.
 	 */
 	public function get_script_handles(): array;
+
+	/**
+	 * Enqueues all stylesheets for the third party.
+	 */
+	public function enqueue_stylesheets(): void;
+
+	/**
+	 * Enqueues all scripts for the third party.
+	 */
+	public function enqueue_scripts(): void;
 }
