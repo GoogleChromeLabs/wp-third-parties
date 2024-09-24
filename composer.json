@@ -51,11 +51,5 @@
       "Google_Chrome_Labs\\WP_Third_Parties\\Test_Data\\": "tests/phpunit/testdata",
       "Google_Chrome_Labs\\WP_Third_Parties\\Test_Utils\\": "tests/phpunit/utils"
     }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/GoogleChromeLabs/third-party-capital"
-    }
-  ]
+  }
 }
