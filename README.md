@@ -15,6 +15,7 @@ $ga = new Google_Chrome_Labs\WP_Third_Parties\Third_Parties\Google_Analytics(
 	)
 );
 
+// Add hooks to enqueue assets.
 add_action( 'wp_loaded', array( $ga, 'add_hooks' ) );
 ```
 
@@ -29,6 +30,7 @@ $gtm = new Google_Chrome_Labs\WP_Third_Parties\Third_Parties\Google_Tag_Manager(
 	)
 );
 
+// Add hooks to enqueue assets.
 add_action( 'wp_loaded', array( $gtm, 'add_hooks' ) );
 ```
 
@@ -43,6 +45,7 @@ $gme = new Google_Chrome_Labs\WP_Third_Parties\Third_Parties\Google_Maps_Embed(
 	)
 );
 
+// No assets need to be enqueued for a Google Maps Embed.
 // To actually render the Google Maps Embed, use this.
 echo $gme->get_html();
 ```
@@ -58,6 +61,7 @@ $yte = new Google_Chrome_Labs\WP_Third_Parties\Third_Parties\YouTube_Embed(
 	)
 );
 
+// Add hooks to enqueue assets.
 add_action( 'wp_loaded', array( $yte, 'add_hooks' ) );
 
 // To actually render the YouTube Embed, use this.
