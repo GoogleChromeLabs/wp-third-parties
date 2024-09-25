@@ -4,6 +4,14 @@ This package is a collection of classes and utilities that can be used to effici
 
 It relies on the platform agnostic solution from [Third Party Capital](https://github.com/GoogleChromeLabs/third-party-capital).
 
+## Installation
+
+You can include this package in your WordPress project using Composer:
+
+```
+composer require googlechromelabs/wp-third-parties:^1.0
+```
+
 ## Usage
 
 ### Google Analytics
@@ -69,9 +77,3 @@ echo $yte->get_html();
 ```
 
 See the [YouTube Embed JSON schema](https://github.com/GoogleChromeLabs/third-party-capital/blob/main/data/youtube-embed.json) for the full list of supported arguments.
-
-## Getting started
-
-```
-composer install
-```
