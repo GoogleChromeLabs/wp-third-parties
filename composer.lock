@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da7c555b7d9de55b58fe0b7d1af3bc78",
+    "content-hash": "100af72f0406ba31bcbf4167d56825e6",
     "packages": [
         {
             "name": "googlechromelabs/third-party-capital",
-            "version": "dev-main",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GoogleChromeLabs/third-party-capital.git",
-                "reference": "11757995b78772fe5975bbfe9b3c65c8ddf718cf"
+                "reference": "c1e34f07133c52bed2457869d5680e2abc56445b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GoogleChromeLabs/third-party-capital/zipball/11757995b78772fe5975bbfe9b3c65c8ddf718cf",
-                "reference": "11757995b78772fe5975bbfe9b3c65c8ddf718cf",
+                "url": "https://api.github.com/repos/GoogleChromeLabs/third-party-capital/zipball/c1e34f07133c52bed2457869d5680e2abc56445b",
+                "reference": "c1e34f07133c52bed2457869d5680e2abc56445b",
                 "shasum": ""
             },
             "require": {
@@ -31,7 +31,6 @@
                 "phpunit/phpunit": "^9",
                 "slevomat/coding-standard": "^8.9"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -45,9 +44,9 @@
             "description": "This package is a collection of classes and utilities that can be used to efficiently load third-party libraries into your PHP application.",
             "support": {
                 "issues": "https://github.com/GoogleChromeLabs/third-party-capital/issues",
-                "source": "https://github.com/GoogleChromeLabs/third-party-capital/tree/main"
+                "source": "https://github.com/GoogleChromeLabs/third-party-capital/tree/3.0.0"
             },
-            "time": "2024-09-23T20:59:55+00:00"
+            "time": "2024-09-25T17:00:46+00:00"
         }
     ],
     "packages-dev": [
@@ -4015,9 +4014,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "googlechromelabs/third-party-capital": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

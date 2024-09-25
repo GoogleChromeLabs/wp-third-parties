@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">=7.2",
-    "googlechromelabs/third-party-capital": "dev-main"
+    "googlechromelabs/third-party-capital": "^3.0.0"
   },
   "require-dev": {
     "brain/monkey": "^2.6",
